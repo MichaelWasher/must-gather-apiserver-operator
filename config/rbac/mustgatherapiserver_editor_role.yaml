@@ -1,0 +1,24 @@
+# permissions for end users to edit mustgatherapiservers.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: mustgatherapiserver-editor-role
+rules:
+- apiGroups:
+  - mustgatherserver.michael-washer.com
+  resources:
+  - mustgatherapiservers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - mustgatherserver.michael-washer.com
+  resources:
+  - mustgatherapiservers/status
+  verbs:
+  - get

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "mustgatherapiserver.fullname" . }}-test-connection"
+  labels:
+    {{- include "mustgatherapiserver.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['{{ include "mustgatherapiserver.fullname" . }}:{{ .Values.service.port }}']
+  restartPolicy: Never

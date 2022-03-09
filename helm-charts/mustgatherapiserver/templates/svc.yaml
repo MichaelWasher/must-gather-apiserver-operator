@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    {{- include "mustgatherapiserver.labels" . | nindent 4 }}
+  name: must-gather-server
+spec:
+  ports:
+  - port: {{ .Values.service.port }}
+    protocol: TCP
+    targetPort: serv-port
+    name: serv-port
+  selector:
+    {{- include "mustgatherapiserver.selectorLabels" . | nindent 4 }}

@@ -1,0 +1,29 @@
+apiVersion: v1
+data:
+  collect.sh: |+
+    #!/bin/bash
+
+    if [ -z "$MG_URL" ]; then
+      echo "\$MG_URL is empty. Setting the MG_URL environment variable is required to continue."
+      exit 1
+    fi
+
+    # Collect Must-Gather
+    MG_ZIP=must-gather-zip.zip
+    MG_DIR=/must-gather
+    
+    mkdir -p ${MG_DIR}
+    cd ${MG_DIR}
+    
+    wget $MG_URL -O ${MG_ZIP}
+    
+    # Unpack
+    unzip $MG_ZIP
+    rm ${MG_ZIP}
+    mv must-gather.local*/quay-io-*/* /must-gather/
+    rm -r must-gather.local*/
+
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: collector-script

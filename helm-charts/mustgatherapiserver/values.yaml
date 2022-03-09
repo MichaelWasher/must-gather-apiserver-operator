@@ -1,0 +1,22 @@
+
+
+image:
+  repository: quay.io/mwasher/must-gather-server
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "latest"
+
+initImage:
+  repository: quay.io/mwasher/alpine
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "latest"
+
+mgURL: "https://none"
+
+service:
+  type: ClusterIP
+  port: 8080
+
+nodeSelector: {}
+podAnnotations: {}

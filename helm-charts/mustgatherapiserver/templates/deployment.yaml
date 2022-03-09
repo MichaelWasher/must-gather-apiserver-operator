@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mustgatherapiserver.fullname" . }}
+  labels:
+    {{- include "mustgatherapiserver.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "mustgatherapiserver.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "mustgatherapiserver.selectorLabels" . | nindent 8 }}
+    spec:
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+      - name: mg-server
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        ports:
+        - name: serv-port
+          containerPort: 8080
+          protocol: TCP
+        volumeMounts:
+        - name: must-gather
+          mountPath: /must-gather
+        args:
+        - --base-dir=/must-gather
+      initContainers:
+      - image: "{{ .Values.initImage.repository }}:{{ .Values.initImage.tag | default .Chart.AppVersion }}"
+        name: mg-collector
+        env:
+        - name: MG_URL
+          value: "{{ .Values.mustgatherurl }}"
+        command:
+        - sh
+        - /scripts/collect.sh
+        securityContext:
+          readOnlyRootFilesystem: false
+        volumeMounts:
+        - name: must-gather
+          mountPath: /must-gather
+        - name: collector-script
+          mountPath: /scripts
+      volumes:
+      - name: must-gather
+        emptyDir: {}
+      - name: collector-script
+        configMap:
+          name: collector-script
